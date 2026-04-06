@@ -38,3 +38,7 @@ Two layers of interception run simultaneously:
 - `content.js` patches `window.fetch` and `XMLHttpRequest.prototype.open` directly inside the page at `document_start`, catching requests that originate from iframes or player scripts before the network layer sees them
 
 No data is collected or transmitted.
+
+## Firefox version
+
+A Firefox-specific version of this extension is available at [RAELIE1/MegaCloudFixFireFox](https://github.com/RAELIE1/MegaCloudFixFireFox).
