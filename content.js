@@ -12,7 +12,6 @@
     return url;
   }
 
-  // Patch fetch
   const originalFetch = window.fetch;
   window.fetch = function (input, init) {
     if (typeof input === "string") {
@@ -23,11 +22,39 @@
     return originalFetch.call(this, input, init);
   };
 
-  // Patch XMLHttpRequest
   const originalOpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function (method, url, ...rest) {
     return originalOpen.call(this, method, fixUrl(url), ...rest);
   };
 
-  console.log("[MegaCloudFix] fetch/XHR patched.");
+  function fixIframe(el) {
+    if (el.tagName === "IFRAME") {
+      const src = el.getAttribute("src");
+      if (src && src.includes(TARGET)) {
+        el.setAttribute("src", src.replace(TARGET, REPLACE));
+      }
+    }
+  }
+
+  document.querySelectorAll("iframe").forEach(fixIframe);
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType !== 1) continue;
+        fixIframe(node);
+        node.querySelectorAll && node.querySelectorAll("iframe").forEach(fixIframe);
+      }
+      if (mutation.type === "attributes" && mutation.target.tagName === "IFRAME") {
+        fixIframe(mutation.target);
+      }
+    }
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["src"],
+  });
 })();
