@@ -1,18 +1,19 @@
 # MegaCloudFix
 
-A minimal browser extension that redirects all requests from `megacloud.blog` to `megacloud.tv`.
+A browser extension that redirects all requests from `megacloud.blog` to `megacloud.tv`.
 
 ## Purpose
 
-Some anime streaming sites reference megacloud.blog as their video host, which may be unavailable or blocked. This extension transparently rewrites those requests to megacloud.tv at the network level, before the browser makes the connection.
+Some anime streaming sites reference megacloud.blog as their video host, which may be unavailable or blocked. This extension transparently rewrites those requests to megacloud.tv, both at the network level and inside the page itself.
 
 ## Files
 
-- `manifest.json` - Extension manifest (Manifest V3)
-- `rules.json` - Declarative redirect rule
-- `background.js` - Service worker entry point
+- `manifest.json` - Extension manifest (Manifest V2, Firefox-compatible)
+- `background.js` - Intercepts requests at the network level via webRequest API
+- `content.js` - Patches fetch and XMLHttpRequest inside the page at document_start
+- `rules.json` - Declarative redirect rules (used by Chrome)
 
-## Installation
+## Browser compatibility
 
 ### Chrome / Chromium-based browsers
 
@@ -31,6 +32,9 @@ Note: Firefox temporary add-ons are removed on browser restart. For permanent in
 
 ## How it works
 
-Uses the `declarativeNetRequest` API to intercept requests matching `megacloud.blog` and rewrite the host to `megacloud.tv`. This applies to all resource types including media, scripts, and XHR requests.
+Two layers of interception run simultaneously:
+
+- `background.js` uses the `webRequest` API to intercept and redirect any network request to `megacloud.blog` before the browser connects
+- `content.js` patches `window.fetch` and `XMLHttpRequest.prototype.open` directly inside the page at `document_start`, catching requests that originate from iframes or player scripts before the network layer sees them
 
 No data is collected or transmitted.
