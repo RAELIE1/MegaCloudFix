@@ -41,7 +41,7 @@ No data is collected or transmitted.
 
 ## Demo
 
-https://www.youtube.com/watch?v=0ynC183V27Q
+https://vimeo.com/1180787841?share=copy&fl=sv&fe=ci#t=0
 
 ## Mobile Demo
 
